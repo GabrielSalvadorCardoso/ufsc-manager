@@ -1,5 +1,6 @@
 from json import JSONDecodeError
 
+import sqlalchemy
 from geoalchemy2.functions import ST_AsGeoJSON
 from sanic import Sanic, response
 from sanic.response import text
@@ -29,6 +30,53 @@ session = Session()
 # app = Sanic("MyHelloWorldApp")
 app = Sanic(__name__)
 CORS(app)
+
+@app.route("/imoveis", methods=["POST"])
+async def create_imovel(request):
+    name = "Reitoria"
+    feature = {
+      "type": "Feature",
+      "properties": {
+          "nome": name
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -48.51986825466156,
+              -27.600850447903003
+            ],
+            [
+              -48.51995408535004,
+              -27.601744183017527
+            ],
+            [
+              -48.51956248283386,
+              -27.601772706358624
+            ],
+            [
+              -48.519492745399475,
+              -27.60087421754827
+            ],
+            [
+              -48.51986825466156,
+              -27.600850447903003
+            ]
+          ]
+        ]
+      }
+    }
+
+    wkt_feature = "SRID=4674;POLYGON ((-48.51986825466156 -27.600850447903003, -48.51995408535004 -27.601744183017527, -48.51956248283386 -27.601772706358624, -48.519492745399475 -27.60087421754827, -48.51986825466156 -27.600850447903003))"
+
+    project = Imovel(nome=name, geom=wkt_feature)
+    session.add(project)
+    try:
+        session.commit()
+    except sqlalchemy.exc.IntegrityError:
+        session.rollback()
+    return response.json(body=None, status=201)
 
 @app.route("/imoveis", methods=["GET"])
 async def retrieve_imoveis(request):
@@ -103,7 +151,7 @@ async def retrieve_imoveis(request):
         },
     },
 
-    return response.json(features)
+    return response.json(feature_collection)
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8070, debug=False, access_log=True)
