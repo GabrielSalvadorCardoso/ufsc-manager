@@ -36,7 +36,7 @@ async def create_solicitacao(request):
 
 
 
-    solicitacao = Solicitacao(
+    solicitacao1 = Solicitacao(
         # numero_os=Column('numero', Integer(), nullable=False)  # Número da OS
         tipo="Elétrica",
         natureza="Corretiva",
@@ -55,13 +55,56 @@ async def create_solicitacao(request):
         # geom="SRID=4674;POLYGON ((-48.51986825466156 -27.600850447903003, -48.51995408535004 -27.601744183017527, -48.51956248283386 -27.601772706358624, -48.519492745399475 -27.60087421754827, -48.51986825466156 -27.600850447903003))"
     )
 
-    session.add(solicitacao)
-    # session.commit()
+    session.add(solicitacao1)
     session.flush()
-    print(solicitacao.id)
 
-    historico_status = HistoricoStatus(status="ANDAMENTO", solicitacao_id=solicitacao.id)
-    session.add(historico_status)
+    historico_status1 = HistoricoStatus(status="ANDAMENTO", solicitacao_id=solicitacao1.id)
+    historico_status2 = HistoricoStatus(status="JUSTIFICADA", solicitacao_id=solicitacao1.id)
+    session.add(historico_status1)
+    session.add(historico_status2)
+
+    solicitacao2 = Solicitacao(
+        tipo="Hidráulica",
+        natureza="Corretiva",
+        responsavel="MARCOS ALMEIDA DA SILVA",
+        interessado="JORGE SENA",
+        detalhamento="Solicitação: Manutenção da encanamento",
+        assunto="1434 - Manutenção SEOMA",
+        grupo_assunto="351 - Manutenção",
+        setor_origem="DMPI/SEOMA",
+        setor_responsavel="DMPI/SEOMA",
+        imovel_id=2,
+        geom="SRID=4674;POINT (-48.51983070373535 -27.601649105160302)"
+    )
+
+    session.add(solicitacao2)
+    session.flush()
+
+    historico_status3 = HistoricoStatus(status="ANDAMENTO", solicitacao_id=solicitacao2.id)
+    historico_status4 = HistoricoStatus(status="FINALIZADA", solicitacao_id=solicitacao2.id)
+    session.add(historico_status3)
+    session.add(historico_status4)
+
+    solicitacao3 = Solicitacao(
+        tipo="Printura",
+        natureza="Preventiva",
+        responsavel="AMANDA NUNES",
+        interessado="FERNANDO DIAZ",
+        detalhamento="Solicitação: Pintura da sala PI45",
+        assunto="1434 - Manutenção SEOMA",
+        grupo_assunto="351 - Manutenção",
+        setor_origem="DMPI/SEOMA",
+        setor_responsavel="DMPI/SEOMA",
+        imovel_id=2,
+        geom="SRID=4674;POINT (-48.51963758468628 -27.60135436327869)"
+    )
+
+    session.add(solicitacao3)
+    session.flush()
+
+    historico_status5 = HistoricoStatus(status="ANDAMENTO", solicitacao_id=solicitacao3.id)
+    session.add(historico_status5)
+
     session.commit()
 
     return response.json(body=None, status=201)
@@ -142,6 +185,12 @@ async def retrieve_solicitacoes(reqest):
 
     feature_collection = {
         "type": "FeatureCollection",
+        'crs': {
+            'type': 'name',
+            'properties': {
+                'name': 'EPSG:4674',
+            },
+        },
         "features": features
     }
     return response.json(feature_collection)
