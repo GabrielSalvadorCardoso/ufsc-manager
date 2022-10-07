@@ -1,3 +1,4 @@
+import datetime
 from json import JSONDecodeError
 
 import sqlalchemy
@@ -33,8 +34,6 @@ CORS(app)
 
 @app.route("/solicitacao", methods=["POST"])
 async def create_solicitacao(request):
-
-
 
     solicitacao1 = Solicitacao(
         # numero_os=Column('numero', Integer(), nullable=False)  # Número da OS
@@ -86,7 +85,7 @@ async def create_solicitacao(request):
     session.add(historico_status4)
 
     solicitacao3 = Solicitacao(
-        tipo="Printura",
+        tipo="Pintura",
         natureza="Preventiva",
         responsavel="AMANDA NUNES",
         interessado="FERNANDO DIAZ",
@@ -105,12 +104,56 @@ async def create_solicitacao(request):
     historico_status5 = HistoricoStatus(status="ANDAMENTO", solicitacao_id=solicitacao3.id)
     session.add(historico_status5)
 
+    solicitacao4 = Solicitacao(
+        tipo="Pintura",
+        natureza="Corretiva",
+        responsavel="TÂNIA GARCIA",
+        interessado="JORGE TAVARES",
+        detalhamento="Solicitação: Pintura na sala AC20",
+        assunto="1434 - Manutenção SEOMA",
+        grupo_assunto="351 - Manutenção",
+        setor_origem="AGECOM",
+        setor_responsavel="AGECOM",
+        imovel_id=3,
+        geom="SRID=4674;POINT (-48.520477116107934 -27.602336040823754)"
+    )
+
+    session.add(solicitacao4)
+    session.flush()
+
+    historico_status6 = HistoricoStatus(status="ANDAMENTO", solicitacao_id=solicitacao4.id)
+    session.add(historico_status6)
+
+    solicitacao5 = Solicitacao(
+        tipo="Elétrica",
+        natureza="Corretiva",
+        responsavel="CARLOS ALMEIDA",
+        interessado="ROBERTO GOLVEIA",
+        detalhamento="Solicitação: Troca de lâmpadas da sala AC18",
+        assunto="1434 - Manutenção SEOMA",
+        grupo_assunto="351 - Manutenção",
+        setor_origem="AGECOM",
+        setor_responsavel="AGECOM",
+        imovel_id=3,
+        geom="SRID=4674;POINT (-48.51995408535004 -27.602138755243516)"
+    )
+
+    session.add(solicitacao5)
+    session.flush()
+
+    historico_status7 = HistoricoStatus(status="ANDAMENTO", solicitacao_id=solicitacao5.id)
+    historico_status8 = HistoricoStatus(status="JUSTIFICADA", solicitacao_id=solicitacao5.id, data_hora=datetime.datetime.now() + datetime.timedelta(days=10))
+    historico_status9 = HistoricoStatus(status="FINALIZADA", solicitacao_id=solicitacao5.id, data_hora=datetime.datetime.now() + datetime.timedelta(days=15))
+    session.add(historico_status7)
+    session.add(historico_status8)
+    session.add(historico_status9)
+
     session.commit()
 
     return response.json(body=None, status=201)
 
 @app.route("/solicitacao", methods=["GET"])
-async def retrieve_solicitacoes(reqest):
+async def retrieve_solicitacoes(request):
     rows = session.query(
         Solicitacao.id,
         Solicitacao.numero_os,
@@ -197,45 +240,48 @@ async def retrieve_solicitacoes(reqest):
 
 @app.route("/imoveis", methods=["POST"])
 async def create_imovel(request):
-    name = "Reitoria"
-    feature = {
-      "type": "Feature",
-      "properties": {
-          "nome": name
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              -48.51986825466156,
-              -27.600850447903003
-            ],
-            [
-              -48.51995408535004,
-              -27.601744183017527
-            ],
-            [
-              -48.51956248283386,
-              -27.601772706358624
-            ],
-            [
-              -48.519492745399475,
-              -27.60087421754827
-            ],
-            [
-              -48.51986825466156,
-              -27.600850447903003
-            ]
-          ]
-        ]
-      }
-    }
+    # feature = {
+    #   "type": "Feature",
+    #   "properties": {
+    #       "nome": name
+    #   },
+    #   "geometry": {
+    #     "type": "Polygon",
+    #     "coordinates": [
+    #       [
+    #         [
+    #           -48.51986825466156,
+    #           -27.600850447903003
+    #         ],
+    #         [
+    #           -48.51995408535004,
+    #           -27.601744183017527
+    #         ],
+    #         [
+    #           -48.51956248283386,
+    #           -27.601772706358624
+    #         ],
+    #         [
+    #           -48.519492745399475,
+    #           -27.60087421754827
+    #         ],
+    #         [
+    #           -48.51986825466156,
+    #           -27.600850447903003
+    #         ]
+    #       ]
+    #     ]
+    #   }
+    # }
 
     wkt_feature = "SRID=4674;POLYGON ((-48.51986825466156 -27.600850447903003, -48.51995408535004 -27.601744183017527, -48.51956248283386 -27.601772706358624, -48.519492745399475 -27.60087421754827, -48.51986825466156 -27.600850447903003))"
+    imovel1 = Imovel(nome="Reitoria", geom=wkt_feature)
+    # session.add(imovel1)
 
-    project = Imovel(nome=name, geom=wkt_feature)
-    session.add(project)
+    wkt_feature2 = "SRID=4674;POLYGON ((-48.52056294679642 -27.602000892820016, -48.52059245109558 -27.60240972570842, -48.51981461048126 -27.602445379667074, -48.51979583501816 -27.60203892385071, -48.52056294679642 -27.602000892820016 ))"
+    imovel2 = Imovel(nome="Centro de Cultura e Eventos", geom=wkt_feature2)
+    session.add(imovel2)
+
     try:
         session.commit()
     except sqlalchemy.exc.IntegrityError:
@@ -278,42 +324,6 @@ async def retrieve_imoveis(request):
         "type": "FeatureCollection",
         "features": features
     }
-
-    feature = {
-        'type': 'Feature',
-        'geometry': {
-            'type': 'MultiPolygon',
-            'coordinates': [
-                [
-                    [
-                        [-5e6, 6e6],
-                        [-3e6, 6e6],
-                        [-3e6, 8e6],
-                        [-5e6, 8e6],
-                        [-5e6, 6e6],
-                    ],
-                ],
-                [
-                    [
-                        [-2e6, 6e6],
-                        [0, 6e6],
-                        [0, 8e6],
-                        [-2e6, 8e6],
-                        [-2e6, 6e6],
-                    ],
-                ],
-                [
-                    [
-                        [1e6, 6e6],
-                        [3e6, 6e6],
-                        [3e6, 8e6],
-                        [1e6, 8e6],
-                        [1e6, 6e6],
-                    ],
-                ],
-            ],
-        },
-    },
 
     return response.json(feature_collection)
 
