@@ -1,0 +1,6 @@
+SQLAlchemy==1.4.41
+GeoAlchemy2==0.12.5
+sanic==22.6.2
+Sanic-Cors==2.1.0
+environs==9.5.0
+psycopg2==2.9.3
