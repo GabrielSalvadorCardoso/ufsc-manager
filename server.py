@@ -292,11 +292,36 @@ async def create_imovel(request):
 async def retrieve_imoveis(request):
     rows = session.query(
         Imovel.id,
-        Imovel.nome,
+        Imovel.fid,
+        Imovel.matricula,
+        Imovel.area,
+        Imovel.propriet,
+        Imovel.cod,
+        Imovel.local,
+        Imovel.centro,
+        Imovel.tipo,
+        Imovel.conclusao,
+        Imovel.n_paviment,
+        Imovel.setor,
+        Imovel.campus_uni,
+        Imovel.search,
+        Imovel.insc_imob,
         ST_AsGeoJSON(Imovel.geom)
     ).filter().with_entities(
         Imovel.id,
-        Imovel.nome,
+        Imovel.matricula,
+        Imovel.area,
+        Imovel.propriet,
+        Imovel.cod,
+        Imovel.local,
+        Imovel.centro,
+        Imovel.tipo,
+        Imovel.conclusao,
+        Imovel.n_paviment,
+        Imovel.setor,
+        Imovel.campus_uni,
+        Imovel.search,
+        Imovel.insc_imob,
         ST_AsGeoJSON(Imovel.geom)
     )
 
@@ -306,7 +331,18 @@ async def retrieve_imoveis(request):
             "type": "Feature",
             "properties": {
                 "id": row.id,
-                "nome": row.nome,
+                "matricula": row.matricula,
+                "area": row.area,
+                "propriet": row.propriet,
+                "cod": row.cod,
+                "local": row.local,
+                "tipo": row.tipo,
+                "conclusao": row.conclusao,
+                "n_paviment": row.n_paviment,
+                "setor": row.setor,
+                "campus_uni": row.campus_uni,
+                "search": row.search,
+                "insc_imob": row.insc_imob
             },
         }
         for attribute_val in list(row):

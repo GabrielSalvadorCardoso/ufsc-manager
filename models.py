@@ -11,7 +11,20 @@ class Imovel(Base):
    __table_args__ = {'schema': 'public'}
 
    id = Column('id', Integer(), primary_key=True, nullable=False)
-   nome = Column('nome',String(length=100),nullable=True)
+   fid = Column('fid', Integer())
+   matricula = Column('matricula', Integer())
+   area = Column('area', Integer())
+   propriet = Column('propriet',String(length=100),nullable=True)
+   cod = Column('cod',String(length=100),nullable=True)
+   local = Column('local',String(length=100),nullable=True)
+   centro = Column('centro',String(length=100),nullable=True)
+   tipo = Column('tipo',String(length=100),nullable=True)
+   conclusao = Column('conclusao',String(length=100),nullable=True)
+   n_paviment = Column('n_paviment',String(length=100),nullable=True)
+   setor = Column('setor',String(length=100),nullable=True)
+   campus_uni = Column('campus_uni',String(length=100),nullable=True)
+   search = Column('search',String(length=110),nullable=True)
+   insc_imob = Column('insc_imob',Integer(),nullable=True)
    geom = Column('geom',Geometry(geometry_type='MULTIPOLYGON', srid=4674, from_text='ST_GeomFromEWKT', name='geometry'),nullable=True)
 
 class Solicitacao(Base):
